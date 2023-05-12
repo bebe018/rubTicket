@@ -1,7 +1,8 @@
-package fuzzy
+package search
 
 import (
 	"math"
+	"strings"
 )
 
 func levenshteinDistance(s1, s2 string) int {
@@ -36,14 +37,17 @@ func min(nums ...int) int {
 	return m
 }
 
-func FuzzySearch(query string, array []string) string {
+func FuzzySearch(query string, concertInfo map[string]string) string {
 	var bestMatch string
 	var bestDistance = math.MaxInt32
-	for _, str := range array {
-		distance := levenshteinDistance(query, str)
-		if distance < bestDistance {
-			bestDistance = distance
-			bestMatch = str
+	for concertName, concertUrl := range concertInfo {
+		concertName = strings.ToLower(concertName)
+		if strings.Contains(concertName, query) {
+			distance := levenshteinDistance(query, concertName)
+			if distance < bestDistance {
+				bestDistance = distance
+				bestMatch = concertUrl
+			}
 		}
 	}
 	return bestMatch

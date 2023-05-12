@@ -1,4 +1,4 @@
-package concertdata
+package concertInfo
 
 import (
 	// fuzzy "server/search"

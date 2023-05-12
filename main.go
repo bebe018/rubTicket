@@ -2,65 +2,49 @@ package main
 
 import (
 	"fmt"
-	"io/ioutil"
-	"net/http"
-	"golang.org/x/oauth2"
-	"golang.org/x/oauth2/google"
+	"github.com/tebeka/selenium"
+	"math"
+	"server/concertInfo"
+	"server/search"
+	"server/webDriver"
+	"strings"
+	"time"
 )
 
-var (
-	googleOauthConfig = &oauth2.Config{
-		RedirectURL:  "http://localhost:8080/callback",
-		ClientID:     "638539877464-6ss434m0hcdq3pbbafhhle3hc43irf8e.apps.googleusercontent.com",
-		ClientSecret: "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",
-		Scopes:       []string{"https://www.googleapis.com/auth/userinfo.email"},
-		Endpoint:     google.Endpoint,
-	}
-	randomState = "random"
-)
+var cookie = selenium.Cookie{
+	Name:   "SID",
+	Value:  "mhmu2k9kc9jr192deh6444lqc1", // 需要定期更換
+	Domain: "tixcraft.com",
+	Path:   "/",
+	Secure: true,
+	Expiry: math.MaxUint32,
+}
+
+const query string = "建宮蓋廟" // 如有英文請輸入全小寫
+const date string = "2023/07/16"
+const price int = 1500
+const wantTickets = "2"
 
 func main() {
-	http.HandleFunc("/", handleHome)
-	http.HandleFunc("/login", handleLogin)
-	http.HandleFunc("/callback", handleCallback)
-	http.ListenAndServe(":8080", nil)
-}
+	WebDriver := WD.GetWebDriver()
+	WD.ClickCookieButton(WebDriver)
+	WebDriver.DeleteCookie("SID")
+	WebDriver.AddCookie(&cookie)
+	WD.LoginWithGoogle(WebDriver)
 
-func handleHome(w http.ResponseWriter, r *http.Request) {
-	var html = `<html><body><a href="/login">Google Log In</a><body></html>`
-	fmt.Fprintf(w, html)
-}
+	concertInfo.SetConcertInfo()
+	concertInfo := concertInfo.GetConcertInfo()
+	concertPage := search.FuzzySearch(query, concertInfo)
+	concertPage = strings.ReplaceAll(concertPage, "detail", "game")
 
-func handleLogin(w http.ResponseWriter, r *http.Request) {
-	url := googleOauthConfig.AuthCodeURL(randomState)
-	http.Redirect(w, r, url, http.StatusTemporaryRedirect)
-} 
+	url := fmt.Sprintf("https://tixcraft.com%s", concertPage)
 
-func handleCallback(w http.ResponseWriter, r *http.Request) {
-	if r.FormValue("state") != randomState {
-		fmt.Println("state is not valid")
-		http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
-		return
-	}
-	token, err := googleOauthConfig.Exchange(oauth2.NoContext, r.FormValue("code"))
-	if err != nil {
-		fmt.Println("could not get token: %s\n", err.Error())
-		http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
-		return
-	}
-	resp, err := http.Get("https://www.googleapis.com/oauth2/v2/userinfo?access_token="+token.AccessToken)
-	if err != nil {
-		fmt.Println("could not create get request: %s\n", err.Error())
-		http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
-		return
-	}
-	defer resp.Body.Close()
-	content, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		fmt.Println("could not parse response: %s\n", err.Error())
-		http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
-		return
-	}
-	fmt.Fprintf(w, "Response: %s", content)   
-	    
+	concertBookPageMap := search.GetConcertBookPage(url)
+	concertBookPage := concertBookPageMap[date]
+	WebDriver.Get(concertBookPage)
+	WD.ChooseConcertEvent(WebDriver, price)
+	WD.TicketQuantity(WebDriver, wantTickets)
+
+	defer WebDriver.Quit()
+	time.Sleep(10 * time.Minute)
 }
