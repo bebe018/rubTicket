@@ -4,9 +4,10 @@ import (
 	"github.com/gocolly/colly"
 )
 
-var url string = GetUrl()
+
 
 func GetConcertBookPage() string {
+	var url string = GetUrl()
 	var concertBookMap = make(map[string]string)
 
 	settings := GetJSON()

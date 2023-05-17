@@ -7,6 +7,7 @@ import (
 	"regexp"
 	"server/concertInfo"
 	"strconv"
+	"time"
 
 	"github.com/tebeka/selenium"
 )
@@ -14,7 +15,13 @@ import (
 var closest int = math.MaxInt32
 
 func ChooseConcertEvent(wd selenium.WebDriver) {
-	concertBookPage := concertInfo.GetConcertBookPage()
+	concertBookPage := ""
+Here:
+	if concertBookPage = concertInfo.GetConcertBookPage(); concertBookPage == "" {
+		fmt.Println("=======")
+		time.Sleep(1 * time.Second)
+		goto Here
+	}
 	wd.Get(concertBookPage)
 
 	settings := concertInfo.GetJSON()
