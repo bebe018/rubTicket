@@ -1,19 +1,25 @@
-package search
+package concertInfo
 
 import (
 	"github.com/gocolly/colly"
 )
 
-var concertBookPage = make(map[string]string)
+var url string = GetUrl()
 
-func GetConcertBookPage(url string) map[string]string {
+func GetConcertBookPage() string {
+	var concertBookMap = make(map[string]string)
+
+	settings := GetJSON()
+
 	c := colly.NewCollector()
 	c.OnHTML(".gridc", func(h *colly.HTMLElement) {
 		// concertDay :=
 		link := h.ChildAttr(".btn", "data-href")
 		date := h.ChildText("td")[0:10]
-		concertBookPage[date] = link
+		concertBookMap[date] = link
 	})
 	c.Visit(url)
-	return concertBookPage
+
+	return concertBookMap[settings.Date]
+
 }

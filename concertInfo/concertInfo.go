@@ -7,7 +7,7 @@ import (
 
 var concertInfo = make(map[string]string)
 
-func SetConcertInfo() {
+func setConcertInfo() {
 	c := colly.NewCollector()
 	// 當Visit訪問網頁後，在網頁響應(Response)之後、發現這是HTML格式 執行的事情
 	c.OnHTML(".thumbnails", func(e *colly.HTMLElement) { // 每找到一個符合 goquerySelector字樣的結果，便會進這個OnHTML一次
@@ -24,6 +24,6 @@ func SetConcertInfo() {
 	c.Visit("https://tixcraft.com/activity")
 }
 
-func GetConcertInfo() map[string]string{
+func getConcertInfo() map[string]string{
 	return concertInfo
 }

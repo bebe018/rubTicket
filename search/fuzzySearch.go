@@ -38,7 +38,7 @@ func min(nums ...int) int {
 }
 
 func FuzzySearch(query string, concertInfo map[string]string) string {
-	var bestMatch string
+	bestMatch := ""
 	var bestDistance = math.MaxInt32
 	for concertName, concertUrl := range concertInfo {
 		concertName = strings.ToLower(concertName)

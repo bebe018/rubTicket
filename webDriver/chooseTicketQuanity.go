@@ -1,22 +1,38 @@
 package WD
 
 import (
+	"fmt"
+	"log"
+	"server/concertInfo"
+
 	"github.com/tebeka/selenium"
 )
 
+func TicketQuantity(wd selenium.WebDriver) {
 
-func TicketQuantity(wd selenium.WebDriver, wantTickets string) {
-	// elem, err := wd.FindElement(selenium.ByTagName, "select")
+	settings := concertInfo.GetJSON()
+
 	elems, err := wd.FindElements(selenium.ByTagName, "option")
 	for _, elem := range elems {
 		tickets, _ := elem.Text()
-		if tickets == wantTickets {
+		if tickets == settings.WantTickets {
 			err = elem.Click()
-			check(err)
+			if err != nil {
+				log.Println(err)
+			}
 		}
 	}
 	elem, err := wd.FindElement(selenium.ByID, "TicketForm_agree")
-	check(err)
+	if err != nil {
+		log.Println(err)
+	}
 	err = elem.Click()
-	check(err)
+	if err != nil {
+		log.Println(err)
+	}
+	defer func(){
+		if r := recover(); r != nil {
+			fmt.Println("ticketQuantity recover happened")
+		}
+	}()
 }

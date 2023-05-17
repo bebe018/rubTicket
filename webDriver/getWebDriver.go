@@ -22,12 +22,15 @@ func GetWebDriver() selenium.WebDriver {
 	if err != nil {
 		panic(err)
 	}
+	var cap_extension chrome.Capabilities
+	cap_extension.AddExtension("modheader.crx")
+	caps.AddChrome(cap_extension)
 
 	WebDriver, err := selenium.NewRemote(caps, fmt.Sprintf("http://127.0.0.1:%d/wd/hub", port))
 	if err != nil {
 		panic(err)
 	}
-	WebDriver.Get("https://tixcraft.com")
+	WebDriver.Get("https://webdriver.modheader.com/add?test=ModHeader%20Test")
 	
 	return WebDriver
 }
