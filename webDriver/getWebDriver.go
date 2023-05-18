@@ -2,7 +2,6 @@ package WD
 
 import (
 	"fmt"
-
 	"github.com/tebeka/selenium"
 	"github.com/tebeka/selenium/chrome"
 )

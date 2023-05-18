@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"log"
 	"server/concertInfo"
-
 	"github.com/tebeka/selenium"
 )
 

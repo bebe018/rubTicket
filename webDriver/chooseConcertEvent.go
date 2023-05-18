@@ -7,8 +7,6 @@ import (
 	"regexp"
 	"server/concertInfo"
 	"strconv"
-	"time"
-
 	"github.com/tebeka/selenium"
 )
 
@@ -18,8 +16,7 @@ func ChooseConcertEvent(wd selenium.WebDriver) {
 	concertBookPage := ""
 Here:
 	if concertBookPage = concertInfo.GetConcertBookPage(); concertBookPage == "" {
-		fmt.Println("=======")
-		time.Sleep(1 * time.Second)
+		fmt.Println("can not find concert")
 		goto Here
 	}
 	wd.Get(concertBookPage)

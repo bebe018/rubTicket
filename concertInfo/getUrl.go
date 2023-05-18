@@ -7,7 +7,6 @@ import (
 	"os"
 	"server/search"
 	"strings"
-	"time"
 )
 
 type Settings struct {
@@ -29,25 +28,6 @@ func GetJSON() Settings {
 	return settings
 }
 
-// func getConcertPage() string {
-// 	settings := GetJSON()
-// 	setConcertInfo()
-// 	concertInfo := getConcertInfo()
-// 	concertPage := search.FuzzySearch(settings.Query, concertInfo)
-// 	concertPage = strings.ReplaceAll(concertPage, "detail", "game")
-// 	return concertPage
-// }
-
-// func GetUrl() string {
-// 	concertPage := getConcertPage()
-// 	for concertPage == "" {
-// 		time.Sleep(1 * time.Second)
-// 		concertPage = getConcertPage()
-// 	}
-// 	url := fmt.Sprintf("https://tixcraft.com%s", concertPage)
-// 	return url
-// }
-
 func GetUrl() string {
 	settings := GetJSON()
 	setConcertInfo()
@@ -55,7 +35,7 @@ func GetUrl() string {
 	concertPage := ""
 Here:
 	if concertPage = search.FuzzySearch(settings.Query, concertInfo); concertPage == "" {
-		time.Sleep(1 * time.Second)
+		fmt.Println("can not find the concert")
 		goto Here
 	}
 	concertPage = search.FuzzySearch(settings.Query, concertInfo)
